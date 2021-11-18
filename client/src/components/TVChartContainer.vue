@@ -1,6 +1,14 @@
 <template>
   <div>
-    <button class="button">Add bars</button>
+<!--    <div class="rightPanel">-->
+<!--      <button @click="handlePlayButtonClick" class="buttons">Play</button>-->
+<!--      <button class="buttons">Long pos</button>-->
+<!--      <button class="buttons">Short pos</button>-->
+<!--      <button class="buttons">Icon up</button>-->
+<!--      <button class="buttons">Icon down</button>-->
+<!--      <button class="buttons">Text</button>-->
+<!--      <button class="buttons">Line</button>-->
+<!--    </div>-->
     <div class="TVChartContainer" :id="container" />
   </div>
 </template>
@@ -60,67 +68,136 @@
       }
     },
     tvWidget: null,
+    widgets: null,
+    methods: {
+      handlePlayButtonClick() {
+        this.widgets.onChartReady(() => {
+          this.widgets.activeChart().createMultipointShape(
+                [{time: 1637192940}, {time: 1637192940 + 60*15}],
+                {
+                  shape: 'long_position',
+                  overrides: {
+                    profitLevel: 20,
+                    stopLevel: 20,
+                  },
+                })
+        })
+      }
+    },
     mounted() {
       const widgetOptions = {
         symbol: 'EURUSD',
-        // BEWARE: no trailing slash is expected in feed URL
-        datafeed: api, // new window.Datafeeds.UDFCompatibleDatafeed(this.datafeedUrl),
+        datafeed: api,
         interval: '1',
-        container: this.container,
-        library_path: this.libraryPath,
+        container: 'tv_chart_container',
+        library_path: '/charting_library/charting_library/',
         locale: 'en',
         disabled_features: ['use_localstorage_for_settings'],
-        // enabled_features: ['study_templates'],
-        // charts_storage_url: this.chartsStorageUrl,
-        // charts_storage_api_version: this.chartsStorageApiVersion,
-        // client_id: this.clientId,
-        user_id: this.userId,
-        fullscreen: this.fullscreen,
-        autosize: this.autosize,
-        studies_overrides: this.studiesOverrides,
+        fullscreen: false,
+        autosize: true,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
       }
-
       this.tvWidget = new TradingView.widget(widgetOptions)
-      const widget = new TradingView.widget(widgetOptions)
+      this.widgets = new TradingView.widget(widgetOptions)
 
       let count = 0
 
-      widget.onChartReady(() => {
-        const longShape = widget.activeChart().createMultipointShape(
-            [{time: 1637138880}, {time: 1637138880 + widgetOptions.interval*60*15}],
-            {
-              shape: 'long_position',
-              overrides: {
-                profitLevel: 200,
-                stopLevel: 200,
-              },
-            })
+      this.widgets.onChartReady(() => {
 
-        const shortShape = widget.activeChart().createMultipointShape(
-            [{time: 1637132880}, {time: 1637132880 + widgetOptions.interval*60*15}],
-            {
-              shape: 'short_position',
-              overrides: {
-                profitLevel: 200,
-                stopLevel: 200,
-              },
-            })
+        this.widgets.headerReady().then(() => {
+          let playButton = this.widgets.createButton()
+          let longPos = this.widgets.createButton()
+          let shortPos = this.widgets.createButton()
+          let iconUp = this.widgets.createButton()
+          let iconDown = this.widgets.createButton()
+          let text = this.widgets.createButton()
+          let line = this.widgets.createButton()
+          playButton.textContent = 'Play'
+          longPos.textContent = 'Long Pos'
+          shortPos.textContent = 'Short Pos'
+          iconUp.textContent = 'Icon Up'
+          iconDown.textContent = 'Icon Down'
+          text.textContent = 'Text'
+          line.textContent = 'Line'
+          longPos.addEventListener('click', () => {
+            this.widgets.activeChart().createMultipointShape(
+                [{time: 1637210940}, {time: 1637210940 + 60*30}],
+                {
+                  shape: 'long_position',
+                  overrides: {
+                    profitLevel: 20,
+                    stopLevel: 20,
+                  },
+                })
+          })
+          shortPos.addEventListener('click', () => {
+            this.widgets.activeChart().createMultipointShape(
+                [{time: 1637210940}, {time: 1637210940 + 60*30}],
+                {
+                  shape: 'short_position',
+                  overrides: {
+                    profitLevel: 20,
+                    stopLevel: 20,
+                  },
+                })
+          })
+          iconDown.addEventListener('click', () => {
+            this.widgets.activeChart().createShape(
+                {time: 1637207820 + 60*2, price: 1.13286 },
+                {
+                  shape: 'arrow_down'
+                }
+            )
+          })
+          iconUp.addEventListener('click', () => {
+            this.widgets.activeChart().createShape(
+                {time: 1637201280 - 60*3, price: 1.13313 },
+                {
+                  shape: 'arrow_up'
+                }
+            )
+          })
+          line.addEventListener('click', () => {
+            this.widgets.activeChart().createMultipointShape(
+                [{time: 1637210940 - 60*80, price: 1.13287}, {time: 1637210940 - 60*100 + 60*40, price: 1.13309}],
+                {
+                  shape: 'trend_line',
+                  overrides: {
+                    profitLevel: 20,
+                    stopLevel: 20,
+                  },
+                })
+          })
+          text.addEventListener('click', () => {
+            this.widgets.activeChart().createShape(
+                {time: 1637203020, price: 1.1326 },
+                {
+                  shape: 'text',
+                  overrides: {
+                    showLabel: true,
+                    textSize: 16,
+                  },
+                  text: 'Sample Text'
+                }
+            )
+          })
 
-        console.log(widget.activeChart().getShapeById(longShape).getProperties())
-
-        widget.subscribe('drawing_event', (id, type) => {
-          if (type === 'click') {
-            count += 1
-            console.log(count)
-          }
         })
 
-        widget.activeChart().getAllShapes().forEach(({ id, name }) => console.log(id, name))
+        //   widget.subscribe('drawing_event', (id, type) => {
+        //     if (type === 'move') {
+        //       console.log(widget.activeChart().getShapeById(id).getProperties())
+        //     }
+        //   })
+        //
+        //   widget.activeChart().getShapeById(arrowIcon).setProperties({
+        //     text: 'AAAAA'
+        //   })
+        //
+        //   widget.activeChart().getAllShapes().forEach(({ id, name }) => console.log(id, name))
+        // })
       })
-
       this.tvWidget.onChartReady(() => {
-
       })
 
     },
@@ -137,14 +214,19 @@
   .TVChartContainer {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 95%;
   }
-  .button {
-    margin-left: 50%;
-    margin-top: 5px;
-    width: 100px;
-    height: 30px;
-    z-index: 9999;
-    position: relative;
+  .container_flex {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .rightPanel {
+    padding: 10px;
+    margin-left: 35px;
+  }
+
+  .buttons {
+    margin-left: 10px;
   }
 </style>

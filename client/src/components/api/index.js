@@ -19,6 +19,7 @@ const configurationData = {
 let drawed = false
 let intervalChange = ''
 let newBar = []
+let play = false
 
 export default {
 	// get a configuration of your datafeed (e.g. supported resolutions, exchanges and so on)
@@ -128,11 +129,14 @@ export default {
 	// subscription to real-time updates
 	subscribeBars: (symbolInfo, interval, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {
 		console.log('[subscribeBars]: Method call with subscribeUID:', subscribeUID);
-		// for (let i = 0; i < newBar.length; i++) {
-		// 	setTimeout( function timer () {
-		// 		onRealtimeCallback(newBar[i])
-		// 	}, i*1000)
-		// }
+
+		if (play) {
+			for (let i = 0; i < newBar.length; i++) {
+			setTimeout(function timer() {
+				onRealtimeCallback(newBar[i])
+			}, i * 1000)
+			}
+		}
 
 		subscribeKline({ symbol: symbolInfo.name, interval, uniqueID: subscribeUID, }, cb => {
 		})

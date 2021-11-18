@@ -55,9 +55,8 @@ app.get('/klines', (request, response) => {
                 csv()
                     .fromFile(csvFilePath)
                     .then((json) => {
-                        console.log(json)
                         response.send(JSON.stringify(json))
-                        //fs.unlink(csvFilePath, () => {})
+                        fs.unlink(csvFilePath, () => {})
                     })
             })
         })
