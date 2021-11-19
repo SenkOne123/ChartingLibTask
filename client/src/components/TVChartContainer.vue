@@ -1,14 +1,5 @@
 <template>
   <div>
-<!--    <div class="rightPanel">-->
-<!--      <button @click="handlePlayButtonClick" class="buttons">Play</button>-->
-<!--      <button class="buttons">Long pos</button>-->
-<!--      <button class="buttons">Short pos</button>-->
-<!--      <button class="buttons">Icon up</button>-->
-<!--      <button class="buttons">Icon down</button>-->
-<!--      <button class="buttons">Text</button>-->
-<!--      <button class="buttons">Line</button>-->
-<!--    </div>-->
     <div class="TVChartContainer" :id="container" />
   </div>
 </template>
@@ -69,6 +60,7 @@
     },
     tvWidget: null,
     widgets: null,
+    savedChart: null,
     methods: {
       handlePlayButtonClick() {
         this.widgets.onChartReady(() => {
@@ -112,6 +104,8 @@
           let iconDown = this.widgets.createButton()
           let text = this.widgets.createButton()
           let line = this.widgets.createButton()
+          let saveButton = this.widgets.createButton()
+          let loadButton = this.widgets.createButton()
           playButton.textContent = 'Play'
           longPos.textContent = 'Long Pos'
           shortPos.textContent = 'Short Pos'
@@ -119,6 +113,8 @@
           iconDown.textContent = 'Icon Down'
           text.textContent = 'Text'
           line.textContent = 'Line'
+          saveButton.textContent = 'Save'
+          loadButton.textContent = 'Load'
           longPos.addEventListener('click', () => {
             this.widgets.activeChart().createMultipointShape(
                 [{time: 1637210940}, {time: 1637210940 + 60*30}],
@@ -181,14 +177,22 @@
                 }
             )
           })
+          saveButton.addEventListener('click', () => {
+            this.tvWidget.save(data => {
+              this.savedChart = data
+            })
+            localStorage.setItem('widgets', JSON.stringify(this.savedChart))
+          })
+          loadButton.addEventListener('click', () => {
+            this.widgets.load(JSON.parse(localStorage.getItem('widgets')))
+          })
 
         })
 
-        //   widget.subscribe('drawing_event', (id, type) => {
-        //     if (type === 'move') {
-        //       console.log(widget.activeChart().getShapeById(id).getProperties())
-        //     }
-        //   })
+          this.widgets.subscribe('drawing_event', (id, type) => {
+            console.log(id,type)
+          })
+
         //
         //   widget.activeChart().getShapeById(arrowIcon).setProperties({
         //     text: 'AAAAA'
@@ -198,6 +202,7 @@
         // })
       })
       this.tvWidget.onChartReady(() => {
+
       })
 
     },
