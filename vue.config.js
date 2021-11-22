@@ -14,12 +14,5 @@ module.exports = {
           filename: '[name].js',
           chunkFilename: '[name].js'
         },
-        // proxy: {
-        //     '/api': {
-        //         target: 'http://localhost:3001',
-        //         pathRewrite: { '^/api': '' },
-        //         changeOrigin: true,
-        //     },
-        // },
       }
 }
