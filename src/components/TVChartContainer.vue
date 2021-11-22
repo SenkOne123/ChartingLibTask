@@ -6,6 +6,7 @@
 
 <script>
   import api from './api'
+  import {getKlines, subscribeKline} from "./api/helpers";
 
   export default {
     name: 'TVChartContainer',
@@ -61,6 +62,7 @@
     tvWidget: null,
     widgets: null,
     savedChart: null,
+    bars: null,
     methods: {
       handlePlayButtonClick() {
         this.widgets.onChartReady(() => {
@@ -94,6 +96,16 @@
 
       let count = 0
 
+      getKlines({
+        symbol: 'EURUSD',
+        interval: '1',
+        from: new Date(0),
+        to: Date.now(),
+        limit: 1000,
+      }).then(res => {
+        this.bars = res.slice(0, 799)
+      })
+
       this.widgets.onChartReady(() => {
 
         this.widgets.headerReady().then(() => {
@@ -115,9 +127,12 @@
           line.textContent = 'Line'
           saveButton.textContent = 'Save'
           loadButton.textContent = 'Load'
+          playButton.addEventListener('click', () => {
+
+          })
           longPos.addEventListener('click', () => {
             this.widgets.activeChart().createMultipointShape(
-                [{time: 1637210940}, {time: 1637210940 + 60*30}],
+                [{time: this.bars[798].time/1000}, {time: this.bars[798].time/1000 + 60*30}],
                 {
                   shape: 'long_position',
                   overrides: {
@@ -128,7 +143,7 @@
           })
           shortPos.addEventListener('click', () => {
             this.widgets.activeChart().createMultipointShape(
-                [{time: 1637210940}, {time: 1637210940 + 60*30}],
+                [{time: this.bars[798].time/1000}, {time: this.bars[798].time/1000 + 60*30}],
                 {
                   shape: 'short_position',
                   overrides: {
@@ -139,7 +154,7 @@
           })
           iconDown.addEventListener('click', () => {
             this.widgets.activeChart().createShape(
-                {time: 1637207820 + 60*2, price: 1.13286 },
+                {time: this.bars[500].time/1000, price: 1.129 },
                 {
                   shape: 'arrow_down'
                 }
@@ -147,7 +162,7 @@
           })
           iconUp.addEventListener('click', () => {
             this.widgets.activeChart().createShape(
-                {time: 1637201280 - 60*3, price: 1.13313 },
+                {time: this.bars[500].time/1000, price: 1.128 },
                 {
                   shape: 'arrow_up'
                 }
@@ -155,9 +170,9 @@
           })
           line.addEventListener('click', () => {
             this.widgets.activeChart().createMultipointShape(
-                [{time: 1637210940 - 60*80, price: 1.13287}, {time: 1637210940 - 60*100 + 60*40, price: 1.13309}],
+                [{time: this.bars[700].time/1000}],
                 {
-                  shape: 'trend_line',
+                  shape: 'vertical_line',
                   overrides: {
                     profitLevel: 20,
                     stopLevel: 20,
@@ -166,7 +181,7 @@
           })
           text.addEventListener('click', () => {
             this.widgets.activeChart().createShape(
-                {time: 1637203020, price: 1.1326 },
+                {time: this.bars[798].time/1000, price: 1.129 },
                 {
                   shape: 'text',
                   overrides: {
