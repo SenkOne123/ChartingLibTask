@@ -1,7 +1,7 @@
 module.exports = {
     runtimeCompiler: true, 
     // options...
-    publicPath: '/',
+    publicPath: '/ChartingLibTask/',
     pages: {
         index: {
             entry: 'src/main.js',
