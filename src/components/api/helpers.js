@@ -79,7 +79,7 @@ function formatingKline({ openTime, open, high, low, close, volume }) {
 
 function request(url, params = {}) {
 	return axios({
-		baseURL: 'http://charting-lib-server.herokuapp.com/',
+		baseURL: 'https://charting-lib-server.herokuapp.com/',
 		method: 'get',
 		url,
 		params
