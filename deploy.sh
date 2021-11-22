@@ -8,7 +8,7 @@ cd dist
 
 git init
 git add -A
-git commit -m 'New Deployment'
+git commit -m 'New Deployment!'
 git push -f git@github.com:SenkOne123/ChartingLibTask.git master:gh-pages
 
 cd -
