@@ -221,17 +221,4 @@
     width: 100%;
     height: 95%;
   }
-  .container_flex {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .rightPanel {
-    padding: 10px;
-    margin-left: 35px;
-  }
-
-  .buttons {
-    margin-left: 10px;
-  }
 </style>
