@@ -1,11 +1,2 @@
-build/
-dist/
-node_modules/
-static/
-.idea
-
-yarn.lock
-
-# tradingview
-#client/public/charting_library/charting_library
-#client/public/charting_library/datafeeds
+node_modules
+dist
